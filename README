@@ -1,0 +1,15 @@
+# dog not god: performance monitoring simplified
+
+dog not god is a performance monitoring tool.
+
+## How does it work
+
+There are two components to dog.
+
+### Server
+
+The server plays two roles. First, it captures performance data, second, it presents it via a web based interface.
+
+### Client
+
+The client sits on the target machine - the machine to be monitored - captures performance data and sends it to the server.

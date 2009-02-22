@@ -1,0 +1,13 @@
+---
+pid: /Users/luis/Projects/dog/tmp/thin.pid 
+log: /Users/luis/Projects/dog/tmp/thin.log 
+timeout: 10
+port: 4567
+max_conns: 32
+chdir: /Users/luis/Projects/dog
+rackup: /Users/luis/Projects/dog/config.ru
+max_persistent_conns: 128
+environment: production
+address: 127.0.0.1
+servers: 1
+daemonize: true

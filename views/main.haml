@@ -1,0 +1,37 @@
+%h2 Summary
+#summary-section
+  %table{:id => "summary-table", :cellspacing => 0, :cellpading => 0}
+    %tr
+      %th Host
+      %th 5 min average
+      %th 10 min average
+      %th 15 min average
+      %th Last heartbeat
+    -for host in @hosts
+      %tr{:class => "level#{host.status}"}
+        %td= host.hostname
+        %td= host.load_5_min
+        %td= host.load_10_min
+        %td= host.load_15_min
+        %td= "#{host.distance_to_last_heartbeat_in_seconds.to_i} seconds ago" unless host.status == 0
+      
+
+
+%table{:id => "section-table"}
+  %tr
+    -for host in @hosts
+      %td
+        .section
+          %h2=host.hostname
+          %p== Last heard from on #{host.last_contacted_on}
+          %h4 Load average for the last 24 hours
+          %script{:type => "text/javascript", :src=> "/amline/swfobject.js"}
+          %div{:id => "flashcontent#{host.id}"}
+            %strong You need to upgrade your Flash Player
+
+          %script{:type=>"text/javascript"}
+            ="var host_id = #{host.id}"
+            var so = new SWFObject("/amline/amline.swf", "amline", "480", "250", "6", "#FFFFFF");
+            so.addVariable("settings_file", encodeURIComponent("/amline/amline_settings.xml"));
+            so.addVariable("data_file", encodeURIComponent("/hosts/" + host_id + "/loads.xml"));
+            so.write("flashcontent" + host_id);
