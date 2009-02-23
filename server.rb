@@ -35,6 +35,11 @@ end
  
 get "/" do
   @hosts = Host.order(:hostname).all
+
+  @end_now = Time.now.to_fifteen_minute_grain_format
+  @start_24h_ago = @end_now - (60*60*24)
+  @start_6h_ago = @end_now - (60*60*6)
+  
   haml :main
 end 
 
@@ -45,7 +50,7 @@ get "/hosts/:id/loads.xml" do
   @start_time = @end_time - (60*60*24)
   @time_range = (@start_time..@end_time)
   
-  @loads = @host.loads_by_minute(@start_time, @end_time)
+  @loads = @host.loads2(@start_time, @end_time)
   
   content_type 'application/xml', :charset => 'utf-8'
   haml :loads_xml, :layout => false
@@ -54,6 +59,7 @@ end
 post "/loads" do
   host = DB[:hosts].filter(:hostname => params[:hostname]).first
   
+  # create an entry for a new host if it doesn't exist
   unless host
     DB[:hosts] << {:hostname => params[:hostname]}
     host = DB[:hosts].filter(:hostname => params[:hostname]).first
@@ -61,7 +67,7 @@ post "/loads" do
   
   @now = Time.now
   
-  load = Load.new({:load_5_min => params[:load_5_min], :load_10_min => params[:load_10_min], :load_15_min => params[:load_15_min], :host_id => host[:id], :created_at => @now, :grain_5_min => @now.to_five_minute_grain_format })
+  load = Load.new({:load_5_min => params[:load_5_min], :load_10_min => params[:load_10_min], :load_15_min => params[:load_15_min], :host_id => host[:id], :created_at => @now})
   if load.save
     status(201)
     # response['Location'] = ""
@@ -93,6 +99,18 @@ class Time
   # Rounds up to the 15 min intervals
   def to_fifteen_minute_grain_format
     offset = (15-(self.min.to_i%15)) * 60
+    Time.parse((self + offset).strftime("%Y-%m-%d %H:%M"))
+  end
+  
+  # Rounds up to the 30 min intervals
+  def to_thirty_minute_grain_format
+    offset = (30-(self.min.to_i%30)) * 60
+    Time.parse((self + offset).strftime("%Y-%m-%d %H:%M"))
+  end
+  
+  # Rounds up to the 60 min intervals
+  def to_sixty_minute_grain_format
+    offset = (60-(self.min.to_i%60)) * 60
     Time.parse((self + offset).strftime("%Y-%m-%d %H:%M"))
   end
 

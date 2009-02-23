@@ -20,18 +20,18 @@
 %table{:id => "section-table"}
   %tr
     -for host in @hosts
+      - series_6h = host.loads_5_min_grain(@start_6h_ago, @end_now)
+      - params_for_6h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.2,0.21&chxt=x,y&chxr=1,0,5,1&chds=0,5&chl=&chd=t:#{series_6h[1].join(",")}|#{series_6h[2].join(",")}|#{series_6h[3].join(",")}"
+      - series_24h = host.loads_15_min_grain(@start_24h_ago, @end_now)
+      - params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.2,0.21&chxt=x,y&chxr=1,0,5,1&chds=0,5&chl=&chd=t:#{series_24h[1].join(",")}|#{series_24h[2].join(",")}|#{series_24h[3].join(",")}"
       %td
         .section
           %h2=host.hostname
           %p== Last heard from on #{host.last_contacted_on}
-          %h4 Load average for the last 24 hours
-          %script{:type => "text/javascript", :src=> "/amline/swfobject.js"}
-          %div{:id => "flashcontent#{host.id}"}
-            %strong You need to upgrade your Flash Player
+          %h4 Load averages for the last 24 hours
+          %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
+          %h4 Load averages for the last 6 hours
+          %img{ :src => "http://chart.apis.google.com/chart?#{params_for_6h}"}
+          
 
-          %script{:type=>"text/javascript"}
-            ="var host_id = #{host.id}"
-            var so = new SWFObject("/amline/amline.swf", "amline", "480", "250", "6", "#FFFFFF");
-            so.addVariable("settings_file", encodeURIComponent("/amline/amline_settings.xml"));
-            so.addVariable("data_file", encodeURIComponent("/hosts/" + host_id + "/loads.xml"));
-            so.write("flashcontent" + host_id);
+          
