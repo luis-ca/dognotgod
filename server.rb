@@ -2,11 +2,14 @@ require 'rubygems'
 require 'sinatra'
  
 configure do
+  DB_DIR = "#{ENV['HOME']}/.dognotgod"
+  
   $LOAD_PATH.unshift File.dirname(__FILE__) + '/app/models'
   require 'sequel'
   require 'logger'
   
-  DB = Sequel.connect('sqlite://dog.db')
+  Dir.mkdir(DB_DIR) unless File.exists?(DB_DIR)
+  DB = Sequel.connect("sqlite://#{DB_DIR}/dog.db")
   DB.loggers << Logger.new($stdout)
  
   # require 'ostruct'

@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'thin.rb'
+
+DOGNOTGOD_DIR = "#{File.dirname(__FILE__)}/.."
+Dir.chdir(DOGNOTGOD_DIR)
+Thin::Runner.new(["-C", "config/thin.yml", ARGV.shift]).run!
