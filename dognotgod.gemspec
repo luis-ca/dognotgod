@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
    s.authors = ["Luis Correa d'Almeida"]
    s.email = %q{luis.ca@gmail.com}
    s.summary = %q{dog not god is a performance monitoring tool.}
-   s.homepage = %q{http://github.com/luiscorreadalmeida/dog}
+   s.homepage = %q{http://github.com/spoonsix/dognotgod}
    s.description = %q{dog not god is a performance monitoring tool.}
-   s.files = FileList["app/**/*", "config.ru", "server.rb", "README", "public/*", "views/*", "config/*", "client.rb"]
+   s.files = FileList["app/**/*", "config.ru", "server.rb", "README", "public/*", "views/*", "config/*"]
    s.add_dependency("sinatra", ">=0.9.0.4")
    s.add_dependency("sequel", ">=2.10.0")
    s.add_dependency("haml", ">=2.0.7")
