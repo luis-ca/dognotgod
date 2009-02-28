@@ -3,7 +3,6 @@
 # you will get all the server specific dependencies.
 #
 # If you would like a clean client gem, use dognotgod-client.gemspec to build it
-#
 Gem::Specification.new do |s|
    s.name = %q{dognotgod}
    s.version = "0.1.2"
