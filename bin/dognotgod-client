@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+
+DOGNOTGOD_DIR = "#{File.dirname(__FILE__)}/.."
+Dir.chdir(DOGNOTGOD_DIR)
+load 'client.rb'
