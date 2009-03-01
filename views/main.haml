@@ -3,17 +3,20 @@
   %table{:id => "summary-table", :cellspacing => 0, :cellpading => 0}
     %tr
       %th Host
+      %th Last heartbeat
       %th 5 min average
       %th 10 min average
       %th 15 min average
-      %th Last heartbeat
+      %th Free disk space
     -for host in @hosts
       %tr{:class => "level#{host.status}"}
         %td= host.hostname
+        %td= "#{host.distance_to_last_heartbeat_in_seconds.to_i} seconds ago" unless host.status == 0
         %td= host.load_5_min
         %td= host.load_10_min
         %td= host.load_15_min
-        %td= "#{host.distance_to_last_heartbeat_in_seconds.to_i} seconds ago" unless host.status == 0
+        %td= "#{host.available_disk_space_in_Gb}Gb out of #{host.disk_space_in_Gb}Gb (#{sprintf('%.2f', host.available_disk_space_percent)}%)" if host.available_disk_space_percent
+
       
 
 

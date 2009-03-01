@@ -26,6 +26,24 @@ class FileSystem < Sequel::Model
       0
     end
   end
+  
+	def used_in_Gb
+	  last_entry = DB[:disks].filter(:file_system_id => self.id).reverse_order(:created_at).last
+	  if last_entry
+      last_entry[:used] / 1024 / 1024
+    else
+      0
+    end
+  end
+  
+	def available_in_Gb
+	  last_entry = DB[:disks].filter(:file_system_id => self.id).reverse_order(:created_at).last
+	  if last_entry
+      last_entry[:available] / 1024 / 1024
+    else
+      0
+    end
+  end
 	
   def disks_5_min_grain(start_time, end_time)
     disk = DB.fetch("SELECT ROUND(AVG(available)/1024/1024, 1) AS available, ROUND(AVG(used)/1024/1024, 1) AS used, grain_5_min FROM disks WHERE file_system_id = #{self.id} AND grain_5_min >= '#{start_time.to_five_minute_grain_format.to_sql_format}' AND grain_5_min <= '#{end_time.to_five_minute_grain_format.to_sql_format}' GROUP BY grain_5_min;").all

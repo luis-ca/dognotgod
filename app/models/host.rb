@@ -22,6 +22,36 @@ class Host < Sequel::Model
     (Time.now - self.loads.last.created_at) if self.loads.last
   end
 
+  def disk_space_in_Gb
+    @total = 0
+    self.file_systems.each do |fs|
+      @total += fs.size_in_Gb
+    end
+    
+    @total
+  end
+
+  def available_disk_space_in_Gb
+    @available = 0
+    self.file_systems.each do |fs|
+      @available += fs.available_in_Gb
+    end
+    
+    @available
+  end
+  
+  def available_disk_space_percent
+    @total = 0
+    @available = 0
+    
+    self.file_systems.each do |fs|
+      @total += fs.size_in_Gb
+      @available += fs.available_in_Gb
+    end
+    
+    @available.to_f / @total * 100 if @total  > 0
+  end
+
   def loads_5_min_grain(start_time, end_time)
     load = DB.fetch("SELECT ROUND(AVG(load_5_min),1) AS load_5_min, ROUND(AVG(load_10_min),1) AS load_10_min, ROUND(AVG(load_15_min),1) AS load_15_min, grain_5_min FROM loads WHERE host_id = #{self.id} AND grain_5_min >= '#{start_time.to_five_minute_grain_format.to_sql_format}' AND grain_5_min <= '#{end_time.to_five_minute_grain_format.to_sql_format}' GROUP BY grain_5_min;").all
     
