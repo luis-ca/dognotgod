@@ -49,11 +49,21 @@ module DogNotGod
       uptime = %x[uptime]
       avgs = uptime.scan(/(\d+\.\d\d)/)
       
+      
+      # the 'free' command is not available on Mac OSX
+      mem = %x[free].split("\n")
+      mem.shift # lose column headers
+      mem_available = mem[0].split(" ")[3]
+      mem_used = mem[0].split(" ")[2]
+      swap_available = mem[2].split(" ")[3]
+      swap_used = mem[2].split(" ")[2]
+      
+      
       df = %x[df -ak].split("\n")
       df.shift # lose column headers
       
       begin
-        RestClient.post("#{@endpoint}/loads", :load_5_min => avgs[0], :load_10_min => avgs[1], :load_15_min => avgs[2], :hostname => hostname)
+       RestClient.post("#{@endpoint}/loads", :load_5_min => avgs[0], :load_10_min => avgs[1], :load_15_min => avgs[2], :hostname => hostname)
         puts "Load info sent successfully."
         
         df.each do |line|
@@ -61,6 +71,9 @@ module DogNotGod
           RestClient.post("#{@endpoint}/disks", :filesystem => info[0], :mounted_on => info[-1], :used => info[2], :available => info[3], :hostname => hostname)
         end
         puts "Filesystem info sent successfully."
+        
+        RestClient.post("#{@endpoint}/mem_stats", :hostname => hostname, :mem_available => mem_available, :mem_used => mem_used, :swap_available => swap_available, :swap_used => swap_used)
+        puts "Memory and swap info sent successfully."
         
       rescue
         puts "There was a problem connecting to the server on #{@endpoint}."

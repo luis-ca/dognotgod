@@ -17,6 +17,7 @@ configure do
   require 'file_system'
   require 'load'
   require 'disk'
+  require 'memory'
 end
  
 error do
@@ -80,6 +81,27 @@ post "/loads" do
   else
     status(500)
   end
+end
+
+post "/mem_stats" do
+  
+  host = DB[:hosts].filter(:hostname => params[:hostname]).first
+  # create an entry for a new host if it doesn't exist
+  unless host
+    DB[:hosts] << {:hostname => params[:hostname]}
+    host = DB[:hosts].filter(:hostname => params[:hostname]).first
+  end
+  
+  @now = Time.now
+  
+  mem = Memory.new({:host_id => host[:id], :mem_available => params[:mem_available], :mem_used => params[:mem_used], :swap_available => params[:swap_available], :swap_used => params[:swap_used], :created_at => @now})
+  if mem.save
+    status(201)
+    # response['Location'] = ""
+  else
+    status(500)
+  end
+  
 end
 
 post "/disks" do

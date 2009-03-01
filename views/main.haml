@@ -8,6 +8,7 @@
       %th 10 min average
       %th 15 min average
       %th Free disk space
+      %th Free memory
     -for host in @hosts
       %tr{:class => "level#{host.status}"}
         %td= host.hostname
@@ -15,8 +16,8 @@
         %td= host.load_5_min
         %td= host.load_10_min
         %td= host.load_15_min
-        %td= "#{host.available_disk_space_in_Gb}Gb out of #{host.disk_space_in_Gb}Gb (#{sprintf('%.2f', host.available_disk_space_percent)}%)" if host.available_disk_space_percent
-
+        %td= "#{host.available_disk_space_in_Gb}Gb out of #{host.total_disk_space_in_Gb}Gb (#{sprintf('%.2f', host.available_disk_space_percent)}%)" if host.available_disk_space_percent
+        %td= "#{host.available_memory_in_Mb}Mb out of #{host.total_memory_in_Mb}Mb (#{sprintf('%.2f', host.available_memory_in_Mb / host.total_memory_in_Mb * 100)}%)" if host.total_memory_in_Mb > 0
       
 
 
@@ -27,6 +28,8 @@
       - params_for_6h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.2,0.21&chxt=x,y&chxr=1,0,4,1&chds=0,4&chl=&chd=t:#{series_6h[1].join(",")}|#{series_6h[2].join(",")}|#{series_6h[3].join(",")}"
       - series_24h = host.loads_15_min_grain(@start_24h_ago, @end_now)
       - params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.2,0.21&chxt=x,y&chxr=1,0,4,1&chds=0,4&chl=&chd=t:#{series_24h[1].join(",")}|#{series_24h[2].join(",")}|#{series_24h[3].join(",")}"
+      - mem_series_24h = host.mems_15_min_grain(@start_24h_ago, @end_now)
+      - mem_params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.95,0.96&chxr=1,0,#{host.total_memory_in_Mb * 1.05}&chxt=x,y&chl=&chds=0,#{host.total_memory_in_Mb * 1.05}&chd=t:#{mem_series_24h[2].join(",")}"
       %td
         .section
           %h2=host.hostname
@@ -35,14 +38,17 @@
           %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
           %h4 Load averages for the last 6 hours
           %img{ :src => "http://chart.apis.google.com/chart?#{params_for_6h}"}
+          %h4 Memory
+          %p{:style => "float:right;"}== Total memory is #{host.total_memory_in_Mb}Mb
+          %br{:style=>"clear:both;"}
+          %img{ :src => "http://chart.apis.google.com/chart?#{mem_params_for_24h}"}
           - host.file_systems.each do |fs|
             - if fs.is_dev? and fs.size_in_Gb > 0
               - series_24h = fs.disks_15_min_grain(@start_24h_ago, @end_now)
-              - params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chd=t:#{series_24h[2].join(",")}"
+              - params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chxr=1,0,#{fs.size_in_Gb * 1.05}&chxt=x,y&chds=0,#{fs.size_in_Gb * 1.05}&chl=&chd=t:#{series_24h[2].join(",")}"
               %h4== #{fs.mounted_on} on #{fs.name}
-              %p{:style => "float:right;"}== Device size is #{fs.size_in_Gb}Gbs
+              %p{:style => "float:right;"}== Device size is #{fs.size_in_Gb}Gb
               %br{:style=>"clear:both;"}
               %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
-          
 
           
