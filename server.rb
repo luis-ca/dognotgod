@@ -14,7 +14,9 @@ configure do
  
   # require 'ostruct'
   require 'host'
+  require 'file_system'
   require 'load'
+  require 'disk'
 end
  
 error do
@@ -47,6 +49,7 @@ get "/" do
 end 
 
 get "/hosts/:id/loads.xml" do
+  return
   @host = Host[params[:id]]
   
   @end_time = Time.now.to_five_minute_grain_format # Round to zero seconds on the minute
@@ -72,6 +75,33 @@ post "/loads" do
   
   load = Load.new({:load_5_min => params[:load_5_min], :load_10_min => params[:load_10_min], :load_15_min => params[:load_15_min], :host_id => host[:id], :created_at => @now})
   if load.save
+    status(201)
+    # response['Location'] = ""
+  else
+    status(500)
+  end
+end
+
+post "/disks" do
+  
+  host = DB[:hosts].filter(:hostname => params[:hostname]).first
+  # create an entry for a new host if it doesn't exist
+  unless host
+    DB[:hosts] << {:hostname => params[:hostname]}
+    host = DB[:hosts].filter(:hostname => params[:hostname]).first
+  end
+  
+  filesystem = DB[:file_systems].filter(:name => params[:filesystem], :mounted_on => params[:mounted_on]).first
+  # create an entry for a new filesystem if it doesn't exist
+  unless filesystem
+    DB[:file_systems] << {:name => params[:filesystem], :mounted_on => params[:mounted_on], :host_id => host[:id]}
+    filesystem = DB[:file_systems].filter(:name => params[:filesystem], :mounted_on => params[:mounted_on]).first
+  end
+  
+  @now = Time.now
+  
+  disk = Disk.new({:file_system_id => filesystem[:id], :mounted_on => params[:mounted_on], :used => params[:used], :available => params[:available], :created_at => @now})
+  if disk.save
     status(201)
     # response['Location'] = ""
   else

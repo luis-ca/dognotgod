@@ -1,6 +1,7 @@
 class Host < Sequel::Model
 
   one_to_many :loads
+  one_to_many :file_systems
   
 	unless table_exists?
 		set_schema do
@@ -11,16 +12,14 @@ class Host < Sequel::Model
 		create_table
 	end
 	
+	# Timestamp of last entry in 'loads' table for this host
 	def last_contacted_on
 	  self.loads.last.created_at if self.loads.last
   end
   
+  # Seconds to timestamp of last entry in 'loads' table for this host
   def distance_to_last_heartbeat_in_seconds
     (Time.now - self.loads.last.created_at) if self.loads.last
-  end
-
-  def loads2(start_time, end_time)
-    load = DB.fetch("SELECT AVG(load_5_min) AS load_5_min, AVG(load_10_min) AS load_10_min, AVG(load_15_min) AS load_15_min, grain_5_min FROM loads WHERE host_id = #{self.id} AND grain_5_min >= '#{start_time.to_five_minute_grain_format.to_sql_format}' AND grain_5_min <= '#{end_time.to_five_minute_grain_format.to_sql_format}'  GROUP BY grain_5_min;").all
   end
 
   def loads_5_min_grain(start_time, end_time)
@@ -70,6 +69,7 @@ class Host < Sequel::Model
     series[1] = []
     series[2] = []
     series[3] = []
+    i = 0
     time_range.step(900) do |fifteen|
       series[0] << fifteen.to_minute_format
       if load.size > 0 and load[0][:grain_15_min].to_minute_format == fifteen.to_minute_format

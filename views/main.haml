@@ -21,9 +21,9 @@
   %tr
     -for host in @hosts
       - series_6h = host.loads_5_min_grain(@start_6h_ago, @end_now)
-      - params_for_6h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.2,0.21&chxt=x,y&chxr=1,0,5,1&chds=0,5&chl=&chd=t:#{series_6h[1].join(",")}|#{series_6h[2].join(",")}|#{series_6h[3].join(",")}"
+      - params_for_6h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.2,0.21&chxt=x,y&chxr=1,0,4,1&chds=0,4&chl=&chd=t:#{series_6h[1].join(",")}|#{series_6h[2].join(",")}|#{series_6h[3].join(",")}"
       - series_24h = host.loads_15_min_grain(@start_24h_ago, @end_now)
-      - params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.2,0.21&chxt=x,y&chxr=1,0,5,1&chds=0,5&chl=&chd=t:#{series_24h[1].join(",")}|#{series_24h[2].join(",")}|#{series_24h[3].join(",")}"
+      - params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.2,0.21&chxt=x,y&chxr=1,0,4,1&chds=0,4&chl=&chd=t:#{series_24h[1].join(",")}|#{series_24h[2].join(",")}|#{series_24h[3].join(",")}"
       %td
         .section
           %h2=host.hostname
@@ -32,6 +32,14 @@
           %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
           %h4 Load averages for the last 6 hours
           %img{ :src => "http://chart.apis.google.com/chart?#{params_for_6h}"}
+          - host.file_systems.each do |fs|
+            - if fs.is_dev? and fs.size_in_Gb > 0
+              - series_24h = fs.disks_15_min_grain(@start_24h_ago, @end_now)
+              - params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chd=t:#{series_24h[2].join(",")}"
+              %h4== #{fs.mounted_on} on #{fs.name}
+              %p{:style => "float:right;"}== Device size is #{fs.size_in_Gb}Gbs
+              %br{:style=>"clear:both;"}
+              %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
           
 
           
