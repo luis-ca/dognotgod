@@ -13,6 +13,10 @@ class Host < Sequel::Model
 		create_table
 	end
 	
+  ####################
+  # Heartbeat
+  ####################
+	
 	# Timestamp of last entry in 'loads' table for this host
 	def last_contacted_on
 	  self.loads.last.created_at if self.loads.last
@@ -23,6 +27,10 @@ class Host < Sequel::Model
     (Time.now - self.loads.last.created_at) if self.loads.last
   end
 
+
+  ####################
+  # Disk space
+  ####################
   def total_disk_space_in_Gb
     @total = 0
     self.file_systems.each do |fs|
@@ -31,7 +39,7 @@ class Host < Sequel::Model
     
     @total
   end
-
+  
   def available_disk_space_in_Gb
     @available = 0
     self.file_systems.each do |fs|
@@ -41,27 +49,20 @@ class Host < Sequel::Model
     @available
   end
   
-  def available_disk_space_percent
-    @total = 0
-    @available = 0
-    
-    self.file_systems.each do |fs|
-      @total += fs.size_in_Gb
-      @available += fs.available_in_Gb
-    end
-    
-    @available.to_f / @total * 100 if @total  > 0
-  end
-
+  
+  ####################
+  # Memory
+  ####################
+  
   def total_memory_in_Mb
-	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
-	  if last_entry
+    last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
+    if last_entry
       (last_entry[:mem_available] + last_entry[:mem_used]) / 1024
     else
       0
     end
   end
-
+  
   def available_memory_in_Mb
 	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
 	  if last_entry
@@ -80,15 +81,73 @@ class Host < Sequel::Model
     end
   end
   
+  def memory_stats_15_min_grain(start_time, end_time)
+    data = DB.fetch("SELECT ROUND(AVG(mem_available)/1024,0) AS mem_available, ROUND(AVG(mem_used)/1024,0) AS mem_used, ROUND(AVG(swap_available)/1024,0) AS swap_available, ROUND(AVG(swap_used)/1024, 0) AS swap_used, grain_15_min FROM memories WHERE host_id = #{self.id} AND grain_15_min >= '#{start_time.to_fifteen_minute_grain_format.to_sql_format}' AND grain_15_min <= '#{end_time.to_fifteen_minute_grain_format.to_sql_format}' GROUP BY grain_15_min;").all
+    
+    time_range = (start_time..end_time)
+    
+    series = []
+    series[0] = []
+    series[1] = []
+    series[2] = []
+    series[3] = []
+    series[4] = []
+    
+    time_range.step(900) do |fifteen|
+      series[0] << fifteen.to_minute_format
+      if data.size > 0 and data[0][:grain_15_min].to_minute_format == fifteen.to_minute_format
+        fact_for_this_dim = data.shift
+        series[1] << fact_for_this_dim[:mem_available]
+        series[2] << fact_for_this_dim[:mem_used]
+        series[3] << fact_for_this_dim[:swap_available]
+        series[4] << fact_for_this_dim[:swap_used]
+      else
+        series[1] << -1
+        series[2] << -1
+        series[3] << -1
+        series[4] << -1
+      end
+    end
+    
+    series
+  end
+  
+  
+  ####################
+  # Swap
+  ####################
+  
   def total_swap_in_Mb
+	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
+	  if last_entry
+      (last_entry[:swap_available] + last_entry[:swap_used]) / 1024
+    else
+      0
+    end
   end
   
   def available_swap_in_Mb
+	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
+	  if last_entry
+      last_entry[:swap_available] / 1024
+    else
+      0
+    end
   end
   
   def used_swap_in_Mb
-  end
-
+	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
+	  if last_entry
+      last_entry[:swap_used] / 1024
+    else
+      0
+    end
+  end  
+  
+  ####################
+  # Load
+  ####################
+  
   def loads_5_min_grain(start_time, end_time)
     load = DB.fetch("SELECT ROUND(AVG(load_5_min),1) AS load_5_min, ROUND(AVG(load_10_min),1) AS load_10_min, ROUND(AVG(load_15_min),1) AS load_15_min, grain_5_min FROM loads WHERE host_id = #{self.id} AND grain_5_min >= '#{start_time.to_five_minute_grain_format.to_sql_format}' AND grain_5_min <= '#{end_time.to_five_minute_grain_format.to_sql_format}' GROUP BY grain_5_min;").all
     
@@ -155,37 +214,6 @@ class Host < Sequel::Model
   end
   
 
-  def mems_15_min_grain(start_time, end_time)
-    data = DB.fetch("SELECT ROUND(AVG(mem_available)/1024,0) AS mem_available, ROUND(AVG(mem_used)/1024,0) AS mem_used, ROUND(AVG(swap_available)/1024,0) AS swap_available, ROUND(AVG(swap_used)/1024, 0) AS swap_used, grain_15_min FROM memories WHERE host_id = #{self.id} AND grain_15_min >= '#{start_time.to_fifteen_minute_grain_format.to_sql_format}' AND grain_15_min <= '#{end_time.to_fifteen_minute_grain_format.to_sql_format}' GROUP BY grain_15_min;").all
-    
-    time_range = (start_time..end_time)
-    
-    series = []
-    series[0] = []
-    series[1] = []
-    series[2] = []
-    series[3] = []
-    series[4] = []
-    
-    time_range.step(900) do |fifteen|
-      series[0] << fifteen.to_minute_format
-      if data.size > 0 and data[0][:grain_15_min].to_minute_format == fifteen.to_minute_format
-        fact_for_this_dim = data.shift
-        series[1] << fact_for_this_dim[:mem_available]
-        series[2] << fact_for_this_dim[:mem_used]
-        series[3] << fact_for_this_dim[:swap_available]
-        series[4] << fact_for_this_dim[:swap_used]
-      else
-        series[1] << -1
-        series[2] << -1
-        series[3] << -1
-        series[4] << -1
-      end
-    end
-    
-    series
-  end
-  
   def load_5_min
     self.loads.last.load_5_min if self.loads.last
   end
