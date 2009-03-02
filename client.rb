@@ -63,12 +63,12 @@ module DogNotGod
       df.shift # lose column headers
       
       begin
-       RestClient.post("#{@endpoint}/loads", :load_5_min => avgs[0], :load_10_min => avgs[1], :load_15_min => avgs[2], :hostname => hostname)
+       RestClient.post("#{@endpoint}/load_stats", :load_5_min => avgs[0], :load_10_min => avgs[1], :load_15_min => avgs[2], :hostname => hostname)
         puts "Load info sent successfully."
         
         df.each do |line|
           info = line.split(" ")
-          RestClient.post("#{@endpoint}/disks", :filesystem => info[0], :mounted_on => info[-1], :used => info[2], :available => info[3], :hostname => hostname)
+          RestClient.post("#{@endpoint}/file_system_stats", :file_system_name => info[0], :mounted_on => info[-1], :used => info[2], :available => info[3], :hostname => hostname)
         end
         puts "Filesystem info sent successfully."
         

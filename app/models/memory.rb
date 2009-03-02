@@ -20,7 +20,7 @@ class Memory < Sequel::Model
 	end
 	
   before_create do
-    self.created_at = Time.now unless self.created_at
+    self.created_at = Time.now.utc unless self.created_at
     self.grain_5_min = self.created_at.to_five_minute_grain_format
     self.grain_15_min = self.created_at.to_fifteen_minute_grain_format
     self.grain_30_min = self.created_at.to_thirty_minute_grain_format

@@ -30,105 +30,27 @@ error do
 end
  
 helpers do
-  def admin?
-    # request.cookies[Blog.admin_cookie_key] == Blog.admin_cookie_value
-  end
- 
-  def auth
-    stop [ 401, 'Not authorized' ] unless admin?
-  end
-end
- 
-get "/" do
-  @hosts = Host.order(:hostname).all
+  
+  def get_host_or_create_if_not_exist(hostname)
+    host = DB[:hosts].filter(:hostname => hostname).first
 
-  @end_now = Time.now.to_fifteen_minute_grain_format
-  @start_24h_ago = @end_now - (60*60*24)
-  @start_6h_ago = @end_now - (60*60*6)
+    unless host
+      DB[:hosts] << {:hostname => hostname}
+      host = DB[:hosts].filter(:hostname => hostname).first
+    end
+    host
+  end
   
-  haml :main
-end 
+  def get_fs_or_create_if_not_exist(host_id, fs_name, mounted_on)
+    fs = DB[:file_systems].filter(:name => fs_name, :mounted_on => mounted_on).first
 
-get "/hosts/:id/loads.xml" do
-  return
-  @host = Host[params[:id]]
-  
-  @end_time = Time.now.to_five_minute_grain_format # Round to zero seconds on the minute
-  @start_time = @end_time - (60*60*24)
-  @time_range = (@start_time..@end_time)
-  
-  @loads = @host.loads2(@start_time, @end_time)
-  
-  content_type 'application/xml', :charset => 'utf-8'
-  haml :loads_xml, :layout => false
-end
-
-post "/loads" do
-  host = DB[:hosts].filter(:hostname => params[:hostname]).first
-  
-  # create an entry for a new host if it doesn't exist
-  unless host
-    DB[:hosts] << {:hostname => params[:hostname]}
-    host = DB[:hosts].filter(:hostname => params[:hostname]).first
+    unless fs
+      DB[:file_systems] << {:name => fs_name, :mounted_on => mounted_on, :host_id => host_id}
+      fs = DB[:file_systems].filter(:name => fs_name, :mounted_on => mounted_on).first
+    end
+    fs
   end
   
-  @now = Time.now
-  
-  load = Load.new({:load_5_min => params[:load_5_min], :load_10_min => params[:load_10_min], :load_15_min => params[:load_15_min], :host_id => host[:id], :created_at => @now})
-  if load.save
-    status(201)
-    # response['Location'] = ""
-  else
-    status(500)
-  end
-end
-
-post "/mem_stats" do
-  
-  host = DB[:hosts].filter(:hostname => params[:hostname]).first
-  # create an entry for a new host if it doesn't exist
-  unless host
-    DB[:hosts] << {:hostname => params[:hostname]}
-    host = DB[:hosts].filter(:hostname => params[:hostname]).first
-  end
-  
-  @now = Time.now
-  
-  mem = Memory.new({:host_id => host[:id], :mem_available => params[:mem_available], :mem_used => params[:mem_used], :swap_available => params[:swap_available], :swap_used => params[:swap_used], :created_at => @now})
-  if mem.save
-    status(201)
-    # response['Location'] = ""
-  else
-    status(500)
-  end
-  
-end
-
-post "/disks" do
-  
-  host = DB[:hosts].filter(:hostname => params[:hostname]).first
-  # create an entry for a new host if it doesn't exist
-  unless host
-    DB[:hosts] << {:hostname => params[:hostname]}
-    host = DB[:hosts].filter(:hostname => params[:hostname]).first
-  end
-  
-  filesystem = DB[:file_systems].filter(:name => params[:filesystem], :mounted_on => params[:mounted_on]).first
-  # create an entry for a new filesystem if it doesn't exist
-  unless filesystem
-    DB[:file_systems] << {:name => params[:filesystem], :mounted_on => params[:mounted_on], :host_id => host[:id]}
-    filesystem = DB[:file_systems].filter(:name => params[:filesystem], :mounted_on => params[:mounted_on]).first
-  end
-  
-  @now = Time.now
-  
-  disk = Disk.new({:file_system_id => filesystem[:id], :mounted_on => params[:mounted_on], :used => params[:used], :available => params[:available], :created_at => @now})
-  if disk.save
-    status(201)
-    # response['Location'] = ""
-  else
-    status(500)
-  end
 end
 
 get '/stylesheets/style.css' do
@@ -136,6 +58,53 @@ get '/stylesheets/style.css' do
   sass :style
 end
 
+get "/" do
+  @hosts = Host.order(:hostname).all
+
+  @end_now = Time.now.utc.to_fifteen_minute_grain_format
+  @start_24h_ago = @end_now - (60*60*24)
+  @start_6h_ago = @end_now - (60*60*6)
+  
+  haml :main
+end 
+
+post "/load_stats" do
+
+  begin
+    host = get_host_or_create_if_not_exist(params[:hostname])
+    load_stats = Load.new({:load_5_min => params[:load_5_min], :load_10_min => params[:load_10_min], :load_15_min => params[:load_15_min], :host_id => host[:id]})
+    load_stats.save
+    status(201)
+  rescue
+    status(500)
+  end
+end
+
+post "/mem_stats" do
+  
+  begin
+    host = get_host_or_create_if_not_exist(params[:hostname])
+    mem_stats = Memory.new({:host_id => host[:id], :mem_available => params[:mem_available], :mem_used => params[:mem_used], :swap_available => params[:swap_available], :swap_used => params[:swap_used]})
+    mem_stats.save
+    status(201)
+  rescue
+    status(500)
+  end
+end
+
+post "/file_system_stats" do
+  
+  begin
+    host = get_host_or_create_if_not_exist(params[:hostname])
+    fs   = get_fs_or_create_if_not_exist(host[:id], params[:file_system_name], params[:mounted_on])
+    
+    disk_stats = Disk.new({:file_system_id => fs[:id], :mounted_on => params[:mounted_on], :used => params[:used], :available => params[:available]})
+    disk_stats.save
+    status(201)
+  rescue
+    status(500)
+  end
+end
 
 class Time
   

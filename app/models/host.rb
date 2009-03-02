@@ -145,7 +145,7 @@ class Host < Sequel::Model
   end  
   
   ####################
-  # Load
+  # Load stats
   ####################
   
   def loads_5_min_grain(start_time, end_time)
@@ -212,7 +212,6 @@ class Host < Sequel::Model
     
     series
   end
-  
 
   def load_5_min
     self.loads.last.load_5_min if self.loads.last
@@ -238,10 +237,6 @@ class Host < Sequel::Model
     else
       1
     end
-  end
-  
-  def to_google_params
-    
   end
   
 end

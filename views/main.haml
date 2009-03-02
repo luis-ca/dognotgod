@@ -17,7 +17,7 @@
         %td= host.load_5_min
         %td= host.load_10_min
         %td= host.load_15_min
-        %td= "#{host.available_disk_space_in_Gb}Gb out of #{host.total_disk_space_in_Gb}Gb (#{sprintf('%.2f', (host.available_disk_space_in_Gb.to_f / host.total_disk_space_in_Gb) * 100)}%)" if host.available_disk_space_percent
+        %td= "#{host.available_disk_space_in_Gb}Gb out of #{host.total_disk_space_in_Gb}Gb (#{sprintf('%.2f', (host.available_disk_space_in_Gb.to_f / host.total_disk_space_in_Gb) * 100)}%)" if host.total_disk_space_in_Gb > 0
         %td= "#{host.available_memory_in_Mb}Mb out of #{host.total_memory_in_Mb}Mb (#{sprintf('%.2f', (host.available_memory_in_Mb.to_f / host.total_memory_in_Mb) * 100)}%)" if host.total_memory_in_Mb > 0
         %td= "#{host.available_swap_in_Mb}Mb out of #{host.total_swap_in_Mb}Mb (#{sprintf('%.2f', (host.available_swap_in_Mb.to_f / host.total_swap_in_Mb) * 100)}%)" if host.total_swap_in_Mb > 0
       
