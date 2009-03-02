@@ -17,8 +17,9 @@ Gem::Specification.new do |s|
    s.add_dependency("haml", ">=2.0.7")
    s.add_dependency("thin", ">=1.0.0")
    s.add_dependency("sqlite3-ruby", ">=1.2.4")
+   s.add_dependency("rest-client", ">=0.9")
    
    # s.files = ["app/**/*", "config.ru", "README.md", "public/*", "views/*", "config/*", "server.rb", "client.rb"].map { |d| Dir[d] }.flatten
-   s.files = ["app/models", "app/models/disk.rb", "app/models/file_system.rb", "app/models/host.rb", "app/models/load.rb", "app/models/memory.rb", "config.ru", "README.md", "views/layout.haml", "views/main.haml", "views/style.sass", "config/thin.yml", "server.rb"]
-   s.executables = ["dognotgod"]
+   s.files = ["app/models", "app/models/disk.rb", "app/models/file_system.rb", "app/models/host.rb", "app/models/load.rb", "app/models/memory.rb", "config.ru", "README.md", "views/layout.haml", "views/main.haml", "views/style.sass", "config/thin.yml", "server.rb", "client.rb"]
+   s.executables = ["dognotgod", "dognotgod-client"]
 end
