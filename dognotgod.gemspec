@@ -5,7 +5,7 @@
 # If you would like a clean client gem, use dognotgod-client.gemspec to build it
 Gem::Specification.new do |s|
    s.name = %q{dognotgod}
-   s.version = "0.1.2"
+   s.version = "0.1.3"
    s.date = Time.now.strftime("%Y-%m-%d")
    s.authors = ["Luis Correa d'Almeida"]
    s.email = %q{luis.ca@gmail.com}
@@ -19,8 +19,8 @@ Gem::Specification.new do |s|
    s.add_dependency("sqlite3-ruby", ">=1.2.4")
    s.add_dependency("rest-client", ">=0.9")
    
-   # s.files = ["app/**/*", "config.ru", "README", "public/*", "views/*", "config/*", "server.rb", "client.rb"].map { |d| Dir[d] }.flatten
-   s.files = ["app/models", "app/models/host.rb", "app/models/load.rb", "config.ru", "README", "views/layout.haml", "views/loads_xml.haml", "views/main.haml", "views/style.sass", "config/thin.yml", "server.rb", "client.rb"]
+   # s.files = ["app/**/*", "config.ru", "README.md", "public/*", "views/*", "config/*", "server.rb", "client.rb"].map { |d| Dir[d] }.flatten
+   s.files = ["app/models", "app/models/disk.rb", "app/models/file_system.rb", "app/models/host.rb", "app/models/load.rb", "app/models/memory.rb", "config.ru", "README.md", "views/layout.haml", "views/main.haml", "views/style.sass", "config/thin.yml", "server.rb", "client.rb"]
       
    s.executables = ["dognotgod", "dognotgod-client"]
 end
