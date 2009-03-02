@@ -6,9 +6,10 @@ dog not god is a performance monitoring tool for *nix based servers. The focus i
 
     gem sources -a http://gems.github.com
     sudo gem install spoonsix-dognotgod
+    sudo gem install spoonsix-dognotgod-client
 
 ### Server
-The server plays two roles: it captures performance data, and it presents that data via a web based interface.
+The server captures performance data, and presents it via a web based interface.
 
     dognotgod start
 
@@ -26,7 +27,7 @@ This will run the client every minute. By default, the server-address is 127.0.0
 ## License
 
 dog not god: performance monitoring simplified
-Copyright (C) 2009 Luis Correa d'Almeida
+Copyright (C) 2009 spoonsix - Luis Correa d'Almeida
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
