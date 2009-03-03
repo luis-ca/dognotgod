@@ -2,7 +2,7 @@ require 'rubygems'
 require 'optparse'
 require 'restclient'
 require 'lib/base.rb'
-require 'lib/client.rb'
+require 'lib/client_commands.rb'
 
 module DogNotGod
 

@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/base'
-require 'lib/client.rb'
+require 'lib/client_commands.rb'
 require 'restclient'
 
 describe DogNotGod::Client do
