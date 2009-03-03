@@ -21,7 +21,7 @@ class FileSystem < Sequel::Model
 	def size_in_Gb
 	  last_entry = DB[:disks].filter(:file_system_id => self.id).reverse_order(:created_at).last
 	  if last_entry
-      (last_entry[:available] + last_entry[:used]) / 1024 / 1024
+      (last_entry[:available].to_i + last_entry[:used].to_i) / 1024 / 1024
     else
       0
     end

@@ -98,7 +98,7 @@ post "/file_system_stats" do
     host = get_host_or_create_if_not_exist(params[:hostname])
     fs   = get_fs_or_create_if_not_exist(host[:id], params[:file_system_name], params[:mounted_on])
     
-    disk_stats = Disk.new({:file_system_id => fs[:id], :mounted_on => params[:mounted_on], :used => params[:used], :available => params[:available]})
+    disk_stats = Disk.new({:file_system_id => fs[:id], :used => params[:used], :available => params[:available]})
     disk_stats.save
     status(201)
   rescue

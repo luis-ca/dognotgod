@@ -6,7 +6,6 @@ class Disk < Sequel::Model
 		set_schema do
 			primary_key :id
 			integer :file_system_id
-			string :mounted_on
 			integer :used
 			integer :available
 			timestamp :created_at
