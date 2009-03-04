@@ -1,8 +1,19 @@
 class Host < Sequel::Model
 
   one_to_many :loads
+  
   one_to_many :file_systems
   one_to_many :memories
+
+  def latest_load_entry
+    @latest_load_entry ||= self.loads_dataset.order(:created_at).last
+  end
+  
+  def latest_memory_entry
+    @latest_memory_entry ||= self.memories_dataset.order(:created_at).last
+  end
+  
+  
   
 	unless table_exists?
 		set_schema do
@@ -13,18 +24,24 @@ class Host < Sequel::Model
 		create_table
 	end
 	
+	@cache = {}
+	
   ####################
   # Heartbeat
   ####################
 	
 	# Timestamp of last entry in 'loads' table for this host
 	def last_contacted_on
-	  self.loads.last.created_at if self.loads.last
+	  self.latest_load_entry.created_at if self.latest_load_entry
   end
   
   # Seconds to timestamp of last entry in 'loads' table for this host
   def distance_to_last_heartbeat_in_seconds
-    (Time.now - self.loads.last.created_at) if self.loads.last
+    Time.now - last_contacted_on if last_contacted_on
+  end
+  
+  def loads_last
+    
   end
 
 
@@ -55,27 +72,20 @@ class Host < Sequel::Model
   ####################
   
   def total_memory_in_Mb
-    last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
-    if last_entry
-      (last_entry[:mem_available] + last_entry[:mem_used]) / 1024
-    else
-      0
-    end
+      (available_memory_in_Mb + used_memory_in_Mb) / 1024
   end
   
   def available_memory_in_Mb
-	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
-	  if last_entry
-      last_entry[:mem_available] / 1024
+	  if latest_memory_entry
+      latest_memory_entry.mem_available / 1024
     else
       0
     end
   end
   
   def used_memory_in_Mb
-	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
-	  if last_entry
-      last_entry[:mem_used] / 1024
+	  if latest_memory_entry
+      latest_memory_entry.mem_used / 1024
     else
       0
     end
@@ -118,27 +128,20 @@ class Host < Sequel::Model
   ####################
   
   def total_swap_in_Mb
-	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
-	  if last_entry
-      (last_entry[:swap_available] + last_entry[:swap_used]) / 1024
-    else
-      0
-    end
+    (latest_memory_entry.swap_available + latest_memory_entry.swap_used) / 1024
   end
   
   def available_swap_in_Mb
-	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
-	  if last_entry
-      last_entry[:swap_available] / 1024
+	  if latest_memory_entry
+      latest_memory_entry.swap_available / 1024
     else
       0
     end
   end
   
   def used_swap_in_Mb
-	  last_entry = DB[:memories].filter(:host_id => self.id).reverse_order(:created_at).last
-	  if last_entry
-      last_entry[:swap_used] / 1024
+	  if latest_memory_entry
+      latest_memory_entry.swap_used / 1024
     else
       0
     end
@@ -214,15 +217,15 @@ class Host < Sequel::Model
   end
 
   def load_5_min
-    self.loads.last.load_5_min if self.loads.last
+    self.latest_load_entry.load_5_min if self.latest_load_entry
   end
   
   def load_10_min
-    self.loads.last.load_10_min if self.loads.last
+    self.latest_load_entry.load_10_min if self.latest_load_entry
   end
   
   def load_15_min
-    self.loads.last.load_15_min if self.loads.last
+    self.latest_load_entry.load_15_min if self.latest_load_entry
   end
   
   def status

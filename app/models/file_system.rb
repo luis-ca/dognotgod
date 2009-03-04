@@ -3,6 +3,10 @@ class FileSystem < Sequel::Model
   many_to_one :hosts
   one_to_many :disks
   
+  def latest_disk_entry
+    @latest_disk_entry ||= self.disks_dataset.order(:created_at).last
+  end
+  
 	unless table_exists?
 		set_schema do
 			primary_key :id
@@ -19,27 +23,20 @@ class FileSystem < Sequel::Model
 	end
 	
 	def size_in_Gb
-	  last_entry = DB[:disks].filter(:file_system_id => self.id).reverse_order(:created_at).last
-	  if last_entry
-      (last_entry[:available].to_i + last_entry[:used].to_i) / 1024 / 1024
-    else
-      0
-    end
+    (available_in_Gb + used_in_Gb) / 1024 / 1024
   end
   
 	def used_in_Gb
-	  last_entry = DB[:disks].filter(:file_system_id => self.id).reverse_order(:created_at).last
-	  if last_entry
-      last_entry[:used] / 1024 / 1024
+	  if latest_disk_entry
+      latest_disk_entry.used / 1024 / 1024
     else
       0
     end
   end
   
 	def available_in_Gb
-	  last_entry = DB[:disks].filter(:file_system_id => self.id).reverse_order(:created_at).last
-	  if last_entry
-      last_entry[:available] / 1024 / 1024
+	  if latest_disk_entry
+      latest_disk_entry.available / 1024 / 1024
     else
       0
     end

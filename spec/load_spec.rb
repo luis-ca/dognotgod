@@ -3,9 +3,8 @@ require 'load'
 
 describe Load do
 	before do
-		@load = Load.new
 	end
   
-  it "should do bla" do
+  it "should return the last element in that table" do
   end
 end

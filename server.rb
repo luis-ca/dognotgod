@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'sinatra'
- 
+# require 'ruby-prof' 
+
 configure do
   DB_DIR = "#{ENV['HOME']}/.dognotgod"
   
@@ -59,6 +60,8 @@ get '/stylesheets/style.css' do
 end
 
 get "/" do
+  # result = RubyProf.profile do
+
   @hosts = Host.order(:hostname).all
 
   @end_now = Time.now.utc.to_fifteen_minute_grain_format
@@ -66,6 +69,10 @@ get "/" do
   @start_6h_ago = @end_now - (60*60*6)
   
   haml :main
+# end
+  # Print a graph profile to text
+  # printer = RubyProf::GraphPrinter.new(result)
+  # printer.print(File.new("tmp/profile.log",  "w"), 0)
 end 
 
 post "/load_stats" do
