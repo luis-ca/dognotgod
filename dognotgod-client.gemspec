@@ -1,5 +1,3 @@
-require 'rake'
-
 Gem::Specification.new do |s|
    s.name = %q{dognotgod-client}
    s.version = "0.1.2"
@@ -11,6 +9,6 @@ Gem::Specification.new do |s|
    s.description = %q{dog not god is a performance monitoring tool.}
    s.add_dependency("rest-client", ">=0.9")
    
-   s.files = FileList["client.rb"]   
+   s.files = ["client.rb"]   
    s.executables = ["dognotgod-client"]
 end
