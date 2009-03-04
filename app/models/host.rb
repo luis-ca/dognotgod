@@ -72,7 +72,7 @@ class Host < Sequel::Model
   ####################
   
   def total_memory_in_Mb
-      (available_memory_in_Mb + used_memory_in_Mb) / 1024
+      available_memory_in_Mb + used_memory_in_Mb
   end
   
   def available_memory_in_Mb
@@ -128,7 +128,7 @@ class Host < Sequel::Model
   ####################
   
   def total_swap_in_Mb
-    (latest_memory_entry.swap_available + latest_memory_entry.swap_used) / 1024
+    available_swap_in_Mb + used_swap_in_Mb
   end
   
   def available_swap_in_Mb
