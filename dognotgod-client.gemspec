@@ -12,3 +12,4 @@ Gem::Specification.new do |s|
    s.files = ["client.rb", "bin/dognotgod-client"]   
    s.executables = ["dognotgod-client"]
 end
+

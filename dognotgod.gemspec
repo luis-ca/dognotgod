@@ -23,3 +23,4 @@ Gem::Specification.new do |s|
    s.files = ["app/models", "app/models/disk.rb", "app/models/file_system.rb", "app/models/host.rb", "app/models/load.rb", "app/models/memory.rb", "lib/base.rb", "lib/client_commands.rb", "config.ru", "README.md", "views/layout.haml", "views/main.haml", "views/style.sass", "config/thin.yml", "server.rb", "client.rb", "bin/dognotgod", "bin/dognotgod-client"]
    s.executables = ["dognotgod", "dognotgod-client"]
 end
+
