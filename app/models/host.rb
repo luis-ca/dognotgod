@@ -14,7 +14,6 @@ class Host < Sequel::Model
   end
   
   
-  
 	unless table_exists?
 		set_schema do
 			primary_key :id
@@ -23,8 +22,6 @@ class Host < Sequel::Model
 		end
 		create_table
 	end
-	
-	@cache = {}
 	
   ####################
   # Heartbeat

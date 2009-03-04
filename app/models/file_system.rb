@@ -23,7 +23,7 @@ class FileSystem < Sequel::Model
 	end
 	
 	def size_in_Gb
-    (available_in_Gb + used_in_Gb) / 1024 / 1024
+    available_in_Gb + used_in_Gb
   end
   
 	def used_in_Gb
