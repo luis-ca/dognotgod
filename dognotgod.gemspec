@@ -5,7 +5,7 @@
 # If you would like a clean client gem, use dognotgod-client.gemspec to build it
 Gem::Specification.new do |s|
    s.name = %q{dognotgod}
-   s.version = "0.1.6"
+   s.version = "0.1.7"
    s.date = Time.now.strftime("%Y-%m-%d")
    s.authors = ["Luis Correa d'Almeida"]
    s.email = %q{luis.ca@gmail.com}
