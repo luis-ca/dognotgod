@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
    s.description = %q{dog not god is a performance monitoring tool.}
    s.add_dependency("rest-client", ">=0.9")
    
-   s.files = ["client.rb", "bin/dognotgod-client"]   
+   s.files = ["client.rb", "bin/dognotgod-client", "lib/base.rb", "lib/client_commands.rb"]   
    s.executables = ["dognotgod-client"]
 end
 
