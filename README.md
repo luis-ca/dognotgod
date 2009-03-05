@@ -20,7 +20,7 @@ This will kick off a thin server on port 4567. It will also create the folder ~/
 The client sits on the target machine - the machine to be monitored - captures performance data and sends it to the server. Note that this works on the machine acting as the server as well.
 
     crontab -e
-    */1 * * * * dognotgod-client -a server-address -p port >> /dev/null 2>&1
+    */1 * * * * /path/to/dognotgod-client -a server-address -p port >> /dev/null 2>&1
 
 This will run the client every minute. By default, the server-address is 127.0.0.1 and the port is 4567.
 
