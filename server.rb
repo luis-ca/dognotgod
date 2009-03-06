@@ -43,11 +43,11 @@ helpers do
   end
   
   def get_fs_or_create_if_not_exist(host_id, fs_name, mounted_on)
-    fs = DB[:file_systems].filter(:name => fs_name, :mounted_on => mounted_on).first
+    fs = DB[:file_systems].filter(:name => fs_name, :host_id => host_id, :mounted_on => mounted_on).first
 
     unless fs
       DB[:file_systems] << {:name => fs_name, :mounted_on => mounted_on, :host_id => host_id}
-      fs = DB[:file_systems].filter(:name => fs_name, :mounted_on => mounted_on).first
+      fs = DB[:file_systems].filter(:name => fs_name, :host_id => host_id, :mounted_on => mounted_on).first
     end
     fs
   end
