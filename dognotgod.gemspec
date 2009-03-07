@@ -19,8 +19,8 @@ Gem::Specification.new do |s|
    s.add_dependency("sqlite3-ruby", ">=1.2.4")
    s.add_dependency("rest-client", ">=0.9")
    
-   # s.files = ["app/**/*", "lib/*", "config.ru", "README.md", "views/*", "config/*", "server.rb", "client.rb", "bin/*"].map { |d| Dir[d] }.flatten
-   s.files = ["app/models/disk.rb", "app/models/file_system.rb", "app/models/host.rb", "app/models/load.rb", "app/models/memory.rb", "lib/base.rb", "lib/client_commands.rb", "config.ru", "README.md", "views/layout.haml", "views/main.haml", "views/style.sass", "config/thin.yml", "server.rb", "client.rb", "bin/dognotgod", "bin/dognotgod-client"]
+   # s.files = ["app/**/*", "lib/*", "config.ru", "README.md", "views/*", "config/*", "server.rb", "client.rb", "bin/*", "public/javascripts/*"].map { |d| Dir[d] }.flatten
+   s.files = ["app/models", "app/models/disk.rb", "app/models/file_system.rb", "app/models/host.rb", "app/models/load.rb", "app/models/memory.rb", "lib/base.rb", "lib/client_commands.rb", "config.ru", "README.md", "views/host.haml", "views/layout.haml", "views/main.haml", "views/style.sass", "config/thin.yml", "server.rb", "client.rb", "bin/dognotgod", "bin/dognotgod-client", "public/javascripts/jquery.simplemodal-1.2.3.min.js"]
    s.executables = ["dognotgod", "dognotgod-client"]
 end
 
