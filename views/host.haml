@@ -1,0 +1,41 @@
+- series_6h = @host.loads_15_min_grain(@start_6h_ago, @end_now)
+- params_for_6h = "cht=ls&chs=300x100&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.25,0.26&chxt=x,y&chxr=1,0,4,1&chds=0,4&chl=&chd=t:#{series_6h[1].join(",")}|#{series_6h[2].join(",")}|#{series_6h[3].join(",")}"
+- series_24h = @host.loads_15_min_grain(@start_24h_ago, @end_now)
+- params_for_24h = "cht=lc&chs=300x100&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.25,0.26&chxt=x,y&chxr=1,0,4,1&chds=0,4&chl=&chd=t:#{series_24h[1].join(",")}|#{series_24h[2].join(",")}|#{series_24h[3].join(",")}"
+- mem_series_24h = @host.memory_stats_15_min_grain(@start_24h_ago, @end_now)
+- mem_params_for_24h = "cht=lc&chs=300x100&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.95,0.96&chxr=1,0,#{@host.total_memory_in_Mb * 1.05}&chxt=x,y&chl=&chds=0,#{@host.total_memory_in_Mb * 1.05}&chd=t:#{mem_series_24h[2].join(",")}|#{mem_series_24h[4].join(",")}"
+- swap_params_for_24h = "cht=lc&chs=300x100&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.95,0.96&chxr=1,0,#{@host.total_swap_in_Mb * 1.05}&chxt=x,y&chl=&chds=0,#{@host.total_swap_in_Mb * 1.05}&chd=t:#{mem_series_24h[4].join(",")}"
+.section
+  %h3=@host.hostname
+  %p== Last heard from on #{@host.last_contacted_on}          
+  
+  %table
+    %tr
+      %td{:style=> "vertical-align: top"}
+        %h4.load Load averages for the last 24 hours
+        %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
+      %td
+        %h4.memory Memory & Swap
+        %p{:style => "float:right;"}== Total memory is #{@host.total_memory_in_Mb}Mb
+        %br
+        %img{ :src => "http://chart.apis.google.com/chart?#{mem_params_for_24h}"}
+    %tr
+      %td{:colspan => 2}
+        %h4.disk Disk space & File system info
+        %table.detail-table{:cellspacing => 0, :cellpading => 0}
+          %tr
+            %th
+            %th File system
+            %th Disk space
+            %th Percentage free disk space
+          - @host.file_systems.each do |fs|
+            %tr
+              %td=fs.mounted_on
+              %td=fs.name
+              - if fs.is_dev? and fs.size_in_Gb > 0
+                - series_24h = fs.disks_15_min_grain(@start_24h_ago, @end_now)
+                - params_for_24h = "cht=ls&chs=75x20&chco=999999&chds=0,#{series_24h[2].max.ceil}&chd=t:#{series_24h[2].join(",")}"
+              %td.space{:style => "padding-left: 100px; background: url(http://chart.apis.google.com/chart?#{params_for_24h}) no-repeat 5px 12px"}="#{fs.available_space_in_Gb} Gb free / #{fs.total_space_in_Gb} Gb total"
+              %td
+                %span.bar{:class => "status#{fs.status}", :style => "width: #{fs.available_space_in_percent.to_i}%"}="#{fs.available_space_in_percent}%" if fs.total_space_in_Gb > 0
+

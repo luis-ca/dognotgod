@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'sinatra'
-# require 'ruby-prof' 
 
 configure do
   DB_DIR = "#{ENV['HOME']}/.dognotgod"
@@ -19,6 +18,11 @@ configure do
   require 'load'
   require 'disk'
   require 'memory'
+  
+  STATUS_GREEN  = 1
+  STATUS_YELLOW = 2
+  STATUS_RED    = 3
+  
 end
  
 error do
@@ -60,20 +64,24 @@ get '/stylesheets/style.css' do
 end
 
 get "/" do
-  # result = RubyProf.profile do
-
   @hosts = Host.order(:hostname).all
-
+  
   @end_now = Time.now.utc.to_fifteen_minute_grain_format
   @start_24h_ago = @end_now - (60*60*24)
   @start_6h_ago = @end_now - (60*60*6)
   
   haml :main
-# end
-  # Print a graph profile to text
-  # printer = RubyProf::GraphPrinter.new(result)
-  # printer.print(File.new("tmp/profile.log",  "w"), 0)
 end 
+
+get "/hosts/:id" do
+  @host = Host.find(:id => params[:id])
+  
+  @end_now = Time.now.utc.to_fifteen_minute_grain_format
+  @start_24h_ago = @end_now - (60*60*24)
+  @start_6h_ago = @end_now - (60*60*6)
+  
+  haml :host, :layout => false
+end
 
 post "/load_stats" do
 

@@ -26,6 +26,10 @@ class FileSystem < Sequel::Model
     available_in_Gb + used_in_Gb
   end
   
+  def total_space_in_Gb
+    size_in_Gb
+  end
+  
 	def used_in_Gb
 	  if latest_disk_entry
       latest_disk_entry.used / 1024 / 1024
@@ -34,11 +38,33 @@ class FileSystem < Sequel::Model
     end
   end
   
+  def used_space_in_Gb
+    used_in_Gb
+  end
+  
 	def available_in_Gb
 	  if latest_disk_entry
       latest_disk_entry.available / 1024 / 1024
     else
       0
+    end
+  end
+  
+  def available_space_in_Gb
+    available_in_Gb
+  end
+  
+  def available_space_in_percent
+    sprintf('%.2f', available_space_in_Gb.to_f / total_space_in_Gb * 100)
+  end
+  
+  def status
+    if available_space_in_percent.to_i > 30
+      STATUS_GREEN
+    elsif available_space_in_percent.to_i > 10
+      STATUS_YELLOW
+    else
+        STATUS_RED
     end
   end
 	
@@ -56,8 +82,8 @@ class FileSystem < Sequel::Model
       series[0] << five.to_minute_format
       if disk.size > 0 and disk[0][:grain_5_min].to_minute_format == five.to_minute_format
         disk_for_this_dim = disk.shift
-        series[1] << (disk_for_this_dim[:available] + disk_for_this_dim[:used])
-        series[2] << disk_for_this_dim[:used]
+        series[1] << (disk_for_this_dim[:available] + disk_for_this_dim[:used]).to_f
+        series[2] << disk_for_this_dim[:used].to_f
       else
         series[1] << -1
         series[2] << -1
@@ -81,8 +107,8 @@ class FileSystem < Sequel::Model
       series[0] << fifteen.to_minute_format
       if disk.size > 0 and disk[0][:grain_15_min].to_minute_format == fifteen.to_minute_format
         disk_for_this_dim = disk.shift
-        series[1] << (disk_for_this_dim[:available] + disk_for_this_dim[:used])
-        series[2] << disk_for_this_dim[:used]
+        series[1] << (disk_for_this_dim[:available] + disk_for_this_dim[:used]).to_f
+        series[2] << disk_for_this_dim[:used].to_f
       else
         series[1] << -1
         series[2] << -1

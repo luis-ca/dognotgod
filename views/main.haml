@@ -13,8 +13,8 @@
       %th Free swap space
     -for host in @hosts
       - series_6h = host.loads_5_min_grain(@start_6h_ago, @end_now)
-      - params_for_6h = "cht=ls&chs=100x20&chco=999999&chds=0,#{series_6h[1].max}&chd=t:#{series_6h[1].join(",")}"
-      %tr
+      - params_for_6h = "cht=ls&chs=75x20&chco=999999&chds=0,#{series_6h[1].max}&chd=t:#{series_6h[1].join(",")}"
+      %tr.link{:onclick => "jQuery.get('/hosts/#{host.id}', {}, function(data) {jQuery.modal(data, {})})"}
         %td{:class => "status#{host.status}"}= host.hostname
         %td.distance-in-secs{:class => "status#{host.status}"}= "#{host.distance_to_last_heartbeat_in_seconds.to_i} seconds ago" unless host.status == 0
         %td.load{:style => "background: url(http://chart.apis.google.com/chart?#{params_for_6h}) no-repeat 5px 12px"}=host.load_5_min
@@ -26,4 +26,3 @@
           %span.bar{:class => "status#{host.memory_status}", :style => "width: #{host.available_memory_in_percent.to_i}%"}="#{host.available_memory_in_percent}%" if host.total_memory_in_Mb > 0
         %td
           %span.bar{:class => "status#{host.swap_status}", :style => "width: #{host.available_swap_in_percent.to_i}"}= "#{host.available_swap_in_percent}%" if host.total_swap_in_Mb > 0
-

@@ -1,9 +1,5 @@
 class Host < Sequel::Model
   
-  STATUS_GREEN  = 1
-  STATUS_YELLOW = 2
-  STATUS_RED    = 3
-  
   one_to_many :loads
   
   one_to_many :file_systems
