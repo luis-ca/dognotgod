@@ -1,6 +1,6 @@
-# dog not god: performance monitoring simplified
+# dog not god: server health monitoring simplified
 
-dog not god is a performance monitoring tool for *nix based servers. The focus is on simplicity and on a 100% ruby implementation.
+dog not god is a server health monitoring tool for *nix based servers. The focus is on simplicity and on a 100% ruby implementation.
 
 ### Installation
 

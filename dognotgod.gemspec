@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
    s.date = Time.now.strftime("%Y-%m-%d")
    s.authors = ["Luis Correa d'Almeida"]
    s.email = %q{luis.ca@gmail.com}
-   s.summary = %q{dog not god is a performance monitoring tool.}
+   s.summary = %q{dog not god is a server health monitoring tool.}
+   s.description = %q{dog not god is a server health monitoring tool.}
    s.homepage = %q{http://github.com/spoonsix/dognotgod}
-   s.description = %q{dog not god is a performance monitoring tool.}
    s.add_dependency("sinatra", ">=0.9.0.4")
    s.add_dependency("sequel", ">=2.10.0")
    s.add_dependency("haml", ">=2.0.7")
