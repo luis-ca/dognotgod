@@ -36,18 +36,21 @@ h2
 h3
   :background url(/images/blossom/48x48/user.png) no-repeat 5px 7px
   :padding 20px 10px 18px 60px
-  :margin 3px 20px 3px 0px
-  :border 1px solid #DDD
+  :margin 3px 0px 3px 0px
+  :border-top 1px solid #DDD
   :border-bottom 1px solid #555
   :background-color #EFEFEF
   
 h4
-  :padding 7px 0px 10px 38px
-  :margin 2px 20px 3px 20px
-  :border-bottom 1px solid #666
+  :padding 10px 0px 10px 40px
+  :margin 2px 0px 3px 20px
+  :border-top 1px solid #DDD
+  :border-left 1px solid #DDD
+  :border-bottom 1px solid #555
   
 h4.load
-  :background url(/images/blossom/32x32/process.png) no-repeat
+  :background url(/images/blossom/32x32/process.png) no-repeat 5px 3px
+  :background-color #EFEFEF
   
 h4.memory, h4.swap
   :background url(/images/blossom/32x32/chart.png) no-repeat
@@ -133,8 +136,8 @@ h4.disk
   :position relative
   :text-align center
   :color #000
-  :height 1.8em
-  :line-height 1.6em
+  :height 2.2em
+  :line-height 2.2em
   :font-size 0.9em
 
 .summary-table span.status1
@@ -147,7 +150,8 @@ h4.disk
   :background-color #CC0000 
 
 
-
+.summary-table img.sparkline
+  :padding-top 5px
 
 
 
@@ -157,11 +161,14 @@ h4.disk
 
 #section-table td
   :vertical-align top
-
+  :padding-right 20px
+  
 .section
+  :padding 0px
+  :margin 0px
   :margin-bottom 20px
-  :margin-left 20px
-  :border-right 1px solid #DDD
+  :border 1px solid #DDD
+  :width 100%
   
 .section p
   :padding 0px 0px 10px 0px
@@ -171,7 +178,7 @@ h4.disk
   :float right
   
 .section img
-  :margin 5px 20px 20px 20px
+  :margin 10px 10px 20px 30px
 
 
 //************************************************************

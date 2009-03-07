@@ -207,9 +207,9 @@ class Host < Sequel::Model
       series[0] << five.to_minute_format
       if load.size > 0 and load[0][:grain_5_min].to_minute_format == five.to_minute_format
         load_for_this_dim = load.shift
-        series[1] << load_for_this_dim[:load_5_min]
-        series[2] << load_for_this_dim[:load_10_min]
-        series[3] << load_for_this_dim[:load_15_min]
+        series[1] << load_for_this_dim[:load_5_min].to_f
+        series[2] << load_for_this_dim[:load_10_min].to_f
+        series[3] << load_for_this_dim[:load_15_min].to_f
       else
         series[1] << -1
         series[2] << -1
@@ -245,9 +245,9 @@ class Host < Sequel::Model
       series[0] << fifteen.to_minute_format
       if load.size > 0 and load[0][:grain_15_min].to_minute_format == fifteen.to_minute_format
         load_for_this_dim = load.shift
-        series[1] << load_for_this_dim[:load_5_min]
-        series[2] << load_for_this_dim[:load_10_min]
-        series[3] << load_for_this_dim[:load_15_min]
+        series[1] << load_for_this_dim[:load_5_min].to_f
+        series[2] << load_for_this_dim[:load_10_min].to_f
+        series[3] << load_for_this_dim[:load_15_min].to_f
       else
         series[1] << -1
         series[2] << -1
