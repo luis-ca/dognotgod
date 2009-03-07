@@ -1,7 +1,7 @@
 body
   :margin 0
   :padding 0
-  :font-family Courier
+  :font-family Georgia, serif
   :font-size 1.0em
 
 br
@@ -10,28 +10,56 @@ br
 a, a:visited
   :color #AAA
 
+//************************************************************
+// headers
+
 h1, h2, h3, h4, h5, h6
-  :font-family Georgia, serif
   :font-weight normal
   :margin 0px 10px 10px 0px
   :white-space nowrap
+  :clear both
 
 h1
   :padding-bottom 10px
-  :margin-bottom  30px
+  :margin 0px 0px 30px 0px
   :border-bottom double #DDDDDD
 
 h2
-  :text-decoration underline
+  :background url(/images/blossom/48x48/world_globe.png) no-repeat 5px 10px
+  :padding 20px 10px 18px 60px
+  :margin 3px 0px 30px 0px
+  :border 1px solid #DDD
+  :border-bottom 1px solid #555
+  :background-color #EFEFEF
+
+
+h3
+  :background url(/images/blossom/48x48/user.png) no-repeat 5px 7px
+  :padding 20px 10px 18px 60px
+  :margin 3px 20px 3px 0px
+  :border 1px solid #DDD
+  :border-bottom 1px solid #555
+  :background-color #EFEFEF
   
 h4
-  :margin 20px 10px 10px 0px
-  :padding 5px
-  :background-color #EFEFEF
+  :padding 7px 0px 10px 38px
+  :margin 2px 20px 3px 20px
+  :border-bottom 1px solid #666
+  
+h4.load
+  :background url(/images/blossom/32x32/process.png) no-repeat
+  
+h4.memory, h4.swap
+  :background url(/images/blossom/32x32/chart.png) no-repeat
+  
+h4.disk
+  :background url(/images/blossom/32x32/hard_disk.png) no-repeat
+
 
 #header
   :height 10px
   :background-color #EFEFEF
+  :border-bottom 1px solid #DDD
   :margin-bottom 20px
 
 #content
@@ -43,23 +71,18 @@ h4
   :padding-bottom 20px
   :border-bottom 1px solid #DDD
 
+
+//************************************************************
 // summary-table
 
 .summary-table
   :border-top 1px solid #DDD
   :border-left 1px solid #DDD
-  
-.summary-table tr.level4, .summary-table tr.level5
-  :background-color #99FF99
+  :width 100%
+  :font-size 1.1em
 
-.summary-table tr.level3
-  :background-color #999933
-  
-.summary-table tr.level1, .summary-table tr.level2
-  :background-color #DD3333
-  
-.summary-table tr.level0
-  :background-color #EFEFEF
+.summary-table tr
+  :height 35px
   
 .summary-table th, #summary-table td
   :border-bottom 1px solid #DDD  
@@ -73,6 +96,60 @@ h4
 .summary-table td
   :padding-left 5px
   :padding-right 5px
+  :border-bottom 1px solid #DDD  
+  :border-right 1px solid #DDD
+  
+.summary-table td.status3
+  :background url(/images/coquette/24x24/red_button.png) no-repeat 8px 5px
+  :padding 0px 0px 0px 40px
+  :margin 0px 0px 0px 5px
+
+.summary-table td.status2
+  :background url(/images/coquette/24x24/yellow_button.png) no-repeat 8px 5px
+  :padding 0px 0px 0px 40px
+  :margin 0px 0px 0px 5px
+
+.summary-table td.status1
+  :background url(/images/coquette/24x24/green_button.png) no-repeat 8px 5px
+  :padding 0px 0px 0px 40px
+  :margin 0px 0px 0px 5px
+
+.summary-table td.distance-in-secs, .summary-table td.load, .summary-table td.free-disk-space, .summary-table td.free-memory, .summary-table td.swap-space
+  :text-align right
+  :padding-right 5px
+
+.summary-table td.distance-in-secs.status1
+  :background url(/images/coquette/16x16/green_button.png) no-repeat 10px 11px
+
+.summary-table td.distance-in-secs.status2
+  :background url(/images/coquette/16x16/yellow_button.png) no-repeat 10px 11px
+
+.summary-table td.distance-in-secs.status3
+  :background url(/images/coquette/16x16/red_button.png) no-repeat 10px 11px
+
+
+.summary-table span.bar
+  :display block
+  :position relative
+  :text-align center
+  :color #000
+  :height 1.8em
+  :line-height 1.6em
+  :font-size 0.9em
+
+.summary-table span.status1
+  :background-color #99DD00
+  
+.summary-table span.status2
+  :background-color #FFAA00
+
+.summary-table span.status3
+  :background-color #CC0000 
+
+
+
+
+
 
 
 #section-table
@@ -86,19 +163,29 @@ h4
   :margin-left 20px
   :border-right 1px solid #DDD
   
-p
-  :font-size 0.7em
-  :margin 0px
-  :padding 0px
-  :margin-right 10px
+.section p
+  :padding 0px 0px 10px 0px
+  :margin 0px 20px 20px 0px
+  :color #333
+  :font-size 0.6em
+  :float right
+  
+.section img
+  :margin 5px 20px 20px 20px
+
+
+//************************************************************
+// footer
 
 #footer
   :margin-top 20px
   :clear both
   :padding 10px
-  :color #AAA
-  :text-align left
-  :font-family sans-serif
+  :color #666
   :text-align center
+  :background-color #EFEFEF
+  :border-top 1px solid #DDD
+  :font-size 0.8em
 
-
+#footer a
+  :color #666

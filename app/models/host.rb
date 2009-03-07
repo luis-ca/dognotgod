@@ -1,5 +1,9 @@
 class Host < Sequel::Model
-
+  
+  STATUS_GREEN  = 1
+  STATUS_YELLOW = 2
+  STATUS_RED    = 3
+  
   one_to_many :loads
   
   one_to_many :file_systems
@@ -51,7 +55,7 @@ class Host < Sequel::Model
       @total += fs.size_in_Gb
     end
     
-    @total
+    @total_disk_space_in_Gb ||= @total
   end
   
   def available_disk_space_in_Gb
@@ -60,7 +64,21 @@ class Host < Sequel::Model
       @available += fs.available_in_Gb
     end
     
-    @available
+    @available_disk_space_in_Gb ||= @available
+  end
+  
+  def available_disk_space_in_percent
+    sprintf('%.2f', available_disk_space_in_Gb.to_f / total_disk_space_in_Gb * 100)
+  end
+  
+  def disk_status
+    if available_disk_space_in_percent.to_i > 30
+      STATUS_GREEN
+    elsif available_disk_space_in_percent.to_i > 10
+      STATUS_YELLOW
+    else
+        STATUS_RED
+    end
   end
   
   
@@ -119,6 +137,19 @@ class Host < Sequel::Model
     series
   end
   
+  def available_memory_in_percent
+    sprintf('%.2f', available_memory_in_Mb.to_f / total_memory_in_Mb * 100)
+  end
+  
+  def memory_status
+    if available_memory_in_percent.to_i > 30
+      STATUS_GREEN
+    elsif available_memory_in_percent.to_i > 10
+      STATUS_YELLOW
+    else
+        STATUS_RED
+    end
+  end
   
   ####################
   # Swap
@@ -143,6 +174,20 @@ class Host < Sequel::Model
       0
     end
   end  
+  
+  def available_swap_in_percent
+    sprintf('%.2f', available_swap_in_Mb.to_f / total_swap_in_Mb * 100)
+  end
+  
+  def swap_status
+    if available_swap_in_percent.to_i > 30
+      STATUS_GREEN
+    elsif available_swap_in_percent.to_i > 10
+      STATUS_YELLOW
+    else
+        STATUS_RED
+    end
+  end
   
   ####################
   # Load stats
@@ -227,15 +272,13 @@ class Host < Sequel::Model
   
   def status
     if self.last_contacted_on == nil
-      0
-    elsif Time.now - self.last_contacted_on < 90
-      5
-    elsif Time.now - self.last_contacted_on < 180
-      3
-    elsif Time.now - self.last_contacted_on < 300
-      2
+      STATUS_RED
+    elsif Time.now - self.last_contacted_on < 75
+      STATUS_GREEN
+    elsif Time.now - self.last_contacted_on < 120
+      STATUS_YELLOW
     else
-      1
+      STATUS_RED
     end
   end
   

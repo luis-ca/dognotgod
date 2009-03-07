@@ -1,4 +1,5 @@
 %h2 Summary
+
 #summary-section
   %table{:class => "summary-table", :cellspacing => 0, :cellpading => 0}
     %tr
@@ -11,15 +12,18 @@
       %th Free memory
       %th Free swap space
     -for host in @hosts
-      %tr{:class => "level#{host.status}"}
-        %td= host.hostname
-        %td= "#{host.distance_to_last_heartbeat_in_seconds.to_i} seconds ago" unless host.status == 0
-        %td= host.load_5_min
-        %td= host.load_10_min
-        %td= host.load_15_min
-        %td= "#{host.available_disk_space_in_Gb}Gb out of #{host.total_disk_space_in_Gb}Gb (#{sprintf('%.2f', (host.available_disk_space_in_Gb.to_f / host.total_disk_space_in_Gb) * 100)}%)" if host.total_disk_space_in_Gb > 0
-        %td= "#{host.available_memory_in_Mb}Mb out of #{host.total_memory_in_Mb}Mb (#{sprintf('%.2f', (host.available_memory_in_Mb.to_f / host.total_memory_in_Mb) * 100)}%)" if host.total_memory_in_Mb > 0
-        %td= "#{host.available_swap_in_Mb}Mb out of #{host.total_swap_in_Mb}Mb (#{sprintf('%.2f', (host.available_swap_in_Mb.to_f / host.total_swap_in_Mb) * 100)}%)" if host.total_swap_in_Mb > 0
+      %tr
+        %td{:class => "status#{host.status}"}= host.hostname
+        %td.distance-in-secs{:class => "status#{host.status}"}= "#{host.distance_to_last_heartbeat_in_seconds.to_i} seconds ago" unless host.status == 0
+        %td.load= host.load_5_min
+        %td.load= host.load_10_min
+        %td.load= host.load_15_min
+        %td
+          %span.bar{:class => "status#{host.disk_status}", :style => "width: #{host.available_disk_space_in_percent.to_i}%"}="#{host.available_disk_space_in_percent}%" if host.total_disk_space_in_Gb > 0
+        %td
+          %span.bar{:class => "status#{host.memory_status}", :style => "width: #{host.available_memory_in_percent.to_i}%"}="#{host.available_memory_in_percent}%" if host.total_memory_in_Mb > 0
+        %td
+          %span.bar{:class => "status#{host.swap_status}", :style => "width: #{host.available_swap_in_percent.to_i}"}= "#{host.available_swap_in_percent}%" if host.total_swap_in_Mb > 0
 
 %table{:id => "section-table"}
   %tr
@@ -33,21 +37,21 @@
       - swap_params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chm=r,DDDDDD,0,0.95,0.96&chxr=1,0,#{host.total_swap_in_Mb * 1.05}&chxt=x,y&chl=&chds=0,#{host.total_swap_in_Mb * 1.05}&chd=t:#{mem_series_24h[4].join(",")}"
       %td
         .section
-          %h2=host.hostname
-          %p== Last heard from on #{host.last_contacted_on}
+          %h3=host.hostname
+          %p== Last heard from on #{host.last_contacted_on}          
           
-          %h4 Load averages for the last 24 hours
+          %h4.load Load averages for the last 24 hours
           %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
           
-          %h4 Load averages for the last 6 hours
+          %h4.load Load averages for the last 6 hours
           %img{ :src => "http://chart.apis.google.com/chart?#{params_for_6h}"}
           
-          %h4 Memory
+          %h4.memory Memory
           %p{:style => "float:right;"}== Total memory is #{host.total_memory_in_Mb}Mb
           %br
           %img{ :src => "http://chart.apis.google.com/chart?#{mem_params_for_24h}"}
           
-          %h4 Swap
+          %h4.swap Swap
           %p{:style => "float:right;"}== Total memory is #{host.total_swap_in_Mb}Mb
           %br
           %img{ :src => "http://chart.apis.google.com/chart?#{swap_params_for_24h}"}
@@ -56,7 +60,7 @@
             - if fs.is_dev? and fs.size_in_Gb > 0
               - series_24h = fs.disks_15_min_grain(@start_24h_ago, @end_now)
               - params_for_24h = "cht=lc&chs=350x120&chco=FF0000,00FF00,0000FF&chxr=1,0,#{fs.size_in_Gb * 1.05}&chxt=x,y&chds=0,#{fs.size_in_Gb * 1.05}&chl=&chd=t:#{series_24h[2].join(",")}"
-              %h4== #{fs.mounted_on} on #{fs.name}
+              %h4.disk== #{fs.mounted_on} on #{fs.name}
               %p{:style => "float:right;"}== Device size is #{fs.size_in_Gb}Gb
               %br
               %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
