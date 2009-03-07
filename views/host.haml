@@ -13,6 +13,8 @@
     %tr
       %td{:style=> "vertical-align: top"}
         %h4.load Load averages for the last 24 hours
+        %p{:style => "float:right;"}== 5, 10 and 15 min averages
+        %br
         %img{ :src => "http://chart.apis.google.com/chart?#{params_for_24h}"}
       %td
         %h4.memory Memory & Swap
