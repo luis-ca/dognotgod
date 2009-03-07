@@ -26,7 +26,7 @@ This will run the client every minute. By default, the server-address is 127.0.0
 
 ## License
 
-dog not god: performance monitoring simplified
+dog not god: server health monitoring simplified
 Copyright (C) 2009 spoonsix - Luis Correa d'Almeida
 
 This program is free software; you can redistribute it and/or
